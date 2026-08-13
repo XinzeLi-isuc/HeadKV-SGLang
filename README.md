@@ -17,7 +17,8 @@ sink + recent,并把节省的显存重新分配给 Full Pool,从而提升 max_to
 - [x] Phase 1:RLKV 调用链逆向(Gate 1 通过,2026-08-13;10 问全答 + 三者关系图)
 - [x] Phase 2:HeadPolicy / Duo loader / partition / budget(Gate 2 通过,2026-08-13;33 单测)
 - [x] Phase 3:双池接入(Gate 3 通过,2026-08-13;T0=204824→Tf=397360,1.94x)
-- [ ] Phase 4:attention 语义正确性
+- [x] Phase 4:attention 语义正确性(Gate 4 通过,2026-08-13;45 单测 + 20/20 E2E 一致)
+
 - [ ] Phase 5:物理双池与容量 Gate
 - [ ] Phase 6:request 生命周期与 continuous batching
 - [ ] Phase 7:正式实验

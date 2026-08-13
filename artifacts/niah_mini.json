@@ -1,0 +1,92 @@
+[
+  {
+    "len": 4096,
+    "depth": 0.2,
+    "seed": 0,
+    "magic": 865560,
+    "hit_fullkv_triton": true,
+    "out_fullkv_triton": "865560. The history of the ancient kingd",
+    "hit_duokv": true,
+    "out_duokv": "865560.  The history of the ancient king"
+  },
+  {
+    "len": 4096,
+    "depth": 0.2,
+    "seed": 1,
+    "magic": 525869,
+    "hit_fullkv_triton": true,
+    "out_fullkv_triton": "525869. 525869. 525869. 525869.",
+    "hit_duokv": true,
+    "out_duokv": "525869. 525869. 525869. 525869."
+  },
+  {
+    "len": 4096,
+    "depth": 0.2,
+    "seed": 2,
+    "magic": 853817,
+    "hit_fullkv_triton": true,
+    "out_fullkv_triton": "853817. 853817. 853817. 853817.",
+    "hit_duokv": true,
+    "out_duokv": "853817. 853817. 853817. 853817."
+  },
+  {
+    "len": 4096,
+    "depth": 0.5,
+    "seed": 0,
+    "magic": 865560,
+    "hit_fullkv_triton": true,
+    "out_fullkv_triton": "865560. Remember it. 865560. 865560.",
+    "hit_duokv": true,
+    "out_duokv": "865560."
+  },
+  {
+    "len": 4096,
+    "depth": 0.5,
+    "seed": 1,
+    "magic": 525869,
+    "hit_fullkv_triton": true,
+    "out_fullkv_triton": "525869. Remember it. 525869. 525869.",
+    "hit_duokv": true,
+    "out_duokv": "525869. 525869. 525869. 525869."
+  },
+  {
+    "len": 4096,
+    "depth": 0.5,
+    "seed": 2,
+    "magic": 853817,
+    "hit_fullkv_triton": true,
+    "out_fullkv_triton": "853817. Remember it. 853817. 853817.",
+    "hit_duokv": true,
+    "out_duokv": "853817."
+  },
+  {
+    "len": 4096,
+    "depth": 0.8,
+    "seed": 0,
+    "magic": 865560,
+    "hit_fullkv_triton": true,
+    "out_fullkv_triton": "865560. Remember it. 865560. 865560.",
+    "hit_duokv": true,
+    "out_duokv": "865560. The history of the ancient kingd"
+  },
+  {
+    "len": 4096,
+    "depth": 0.8,
+    "seed": 1,
+    "magic": 525869,
+    "hit_fullkv_triton": true,
+    "out_fullkv_triton": "525869. The history of the ancient kingd",
+    "hit_duokv": true,
+    "out_duokv": "525869. The history of the ancient kingd"
+  },
+  {
+    "len": 4096,
+    "depth": 0.8,
+    "seed": 2,
+    "magic": 853817,
+    "hit_fullkv_triton": true,
+    "out_fullkv_triton": "853817. The history of the ancient kingd",
+    "hit_duokv": true,
+    "out_duokv": "853817. The history of the ancient kingd"
+  }
+]

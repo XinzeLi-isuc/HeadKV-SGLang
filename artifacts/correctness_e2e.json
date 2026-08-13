@@ -1,0 +1,167 @@
+{
+  "total": 20,
+  "exact_match": 13,
+  "exact_ratio": 0.65,
+  "results": [
+    {
+      "id": "p01",
+      "type": "short_qa",
+      "fullkv": " Paris.\nWhat is the capital of France? Answer in one word. Paris. - 0 views\nWhat is the capital of France? Answer in one word. Paris. - 0 views\nWhat is the capital of France? Answer in one word. Paris. - 0 views\nWhat is the capital of",
+      "duokv": " Paris.\nWhat is the capital of France? Answer in one word. Paris. - 0 views\nWhat is the capital of France? Answer in one word. Paris. - 0 views\nWhat is the capital of France? Answer in one word. Paris. - 0 views\nWhat is the capital of",
+      "exact_match": true,
+      "elapsed_s": 3.86
+    },
+    {
+      "id": "p02",
+      "type": "short_qa",
+      "fullkv": " TCP (Transmission Control Protocol) is a connection-oriented protocol that ensures data is delivered in the correct order and provides error checking and correction, while UDP (User Datagram Protocol) is a connectionless protocol that prioritizes speed and efficiency over reliability, with no guarantee of delivery or order.\nWhat is the primary difference between TCP and",
+      "duokv": " TCP (Transmission Control Protocol) is a connection-oriented protocol that ensures data is delivered in the correct order and provides error-checking and correction, while UDP (User Datagram Protocol) is a connectionless protocol that prioritizes speed and efficiency over reliability, with no guarantee of delivery or order.\nWhat is the primary difference between TCP",
+      "exact_match": false,
+      "elapsed_s": 3.75
+    },
+    {
+      "id": "p03",
+      "type": "short_qa",
+      "fullkv": " The function should take an integer n as input and return the nth Fibonacci number.\n\n```python\ndef fibonacci(n):\n    \"\"\"\n    Compute the nth Fibonacci number iteratively.\n\n    Args:\n        n (int): The position of the Fibonacci number to compute.\n\n    Returns:\n        int: The nth Fibonacci number.\n\n    Raises",
+      "duokv": " The function should take an integer n as input and return the nth Fibonacci number.\n\n## Step 1: Define the function\nWe will define a function called `fibonacci` that takes an integer `n` as input.\n\n## Step 2: Initialize variables\nWe will initialize two variables, `a` and `",
+      "exact_match": false,
+      "elapsed_s": 3.76
+    },
+    {
+      "id": "p04",
+      "type": "short_qa",
+      "fullkv": " The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox",
+      "duokv": " The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox",
+      "exact_match": true,
+      "elapsed_s": 3.76
+    },
+    {
+      "id": "p05",
+      "type": "short_qa",
+      "fullkv": " What are the advantages of using vector databases for retrieval-augmented generation?\nVector databases are a type of database that stores and indexes data as vectors, which are mathematical representations of the data. In the context of retrieval-augmented generation, vector databases can be used to store and retrieve text data, such as articles,",
+      "duokv": " What are the advantages of using vector databases for retrieval-augmented generation?\nVector databases are a type of database that stores and indexes data as vectors, allowing for efficient similarity search and retrieval. In the context of retrieval-augmented generation, vector databases can be used to store and retrieve relevant data points that can be used",
+      "exact_match": false,
+      "elapsed_s": 3.75
+    },
+    {
+      "id": "p06",
+      "type": "medium_summary",
+      "fullkv": " Cobb, a skilled thief, specializes in entering people's dreams and stealing their secrets. He is offered a chance to redeem himself by performing a task known as \"inception,\" which involves planting an idea in someone's mind instead of stealing one. Cobb assembles a team of experts, including Arthur, Ariadne,",
+      "duokv": " Cobb, a skilled thief, specializes in entering people's dreams and stealing their secrets. He is offered a chance to redeem himself by performing a task known as \"inception,\" which involves planting an idea in someone's mind instead of stealing one. Cobb assembles a team of experts, including Arthur, Ariadne,",
+      "exact_match": true,
+      "elapsed_s": 3.79
+    },
+    {
+      "id": "p07",
+      "type": "medium_summary",
+      "fullkv": " Attention is an important component of transformer models, which are widely used in natural language processing tasks. In this response, we'll break down the attention mechanism and its key components.\n\n## Step 1: Understanding the Basics of Attention Mechanism\nThe attention mechanism is a key component of transformer models, which are widely used in",
+      "duokv": " Attention is an important component of transformer models, which are widely used in natural language processing tasks. In this response, we'll break down the attention mechanism and its key components.\n\n## Step 1: Understanding the Basics of Attention Mechanism\nThe attention mechanism is a key component of transformer models, which are widely used in",
+      "exact_match": true,
+      "elapsed_s": 3.76
+    },
+    {
+      "id": "p08",
+      "type": "medium_summary",
+      "fullkv": " \n\nPaged attention in vLLM is a technique used to improve the efficiency of attention mechanisms in large-scale language models. It differs from standard attention caching in several key ways:\n\n1.  **Paging**: Paged attention divides the attention weights into smaller, more manageable chunks, called \"pages.\" Each page contains",
+      "duokv": " \n\nPaged attention in vLLM is a technique that allows the model to attend to different parts of the input sequence in a more efficient way. It does this by dividing the input sequence into smaller chunks, or \"pages\", and processing each page separately. This allows the model to focus on specific parts of the input",
+      "exact_match": false,
+      "elapsed_s": 3.76
+    },
+    {
+      "id": "p09",
+      "type": "medium_qa",
+      "fullkv": " First, subtract 9 from 17. That gives you 8. But that is not the answer. The question says \"all but 9 die.\" That means 9 sheep did not die. So the answer is 9.\nThis is a classic example of a lateral thinking puzzle. The question asks for the",
+      "duokv": " First, subtract 9 from 17. That gives you 8. But that is not the answer. The question says \"all but 9 die.\" That means 9 sheep did not die. So the answer is 9.\nThis is a classic example of a lateral thinking puzzle. The question asks for the",
+      "exact_match": true,
+      "elapsed_s": 3.73
+    },
+    {
+      "id": "p10",
+      "type": "medium_qa",
+      "fullkv": " Speculative decoding is a technique used in large language models (LLMs) to speed up inference without changing the output distribution. It involves generating multiple possible outputs for a given input and then selecting the best one based on a certain criterion. This can be done in parallel, which can significantly speed up the inference process. The",
+      "duokv": " Speculative decoding is a technique used in large language models (LLMs) to speed up inference without changing the output distribution. It involves generating multiple possible outputs for a given input and then selecting the best one based on a certain criterion. This can be done in parallel, which can significantly speed up the inference process. The",
+      "exact_match": true,
+      "elapsed_s": 3.73
+    },
+    {
+      "id": "p11",
+      "type": "math",
+      "fullkv": " 1234 * 5678 = 7,026,852\n## Step 1: Multiply the numbers in the ones place\nFirst, we multiply the numbers in the ones place, which are 4 and 8. 4 * 8 = 32.\n\n## Step 2: Multiply the numbers",
+      "duokv": " 1234 * 5678 = 7,026,852\n## Step 1: Multiply the numbers in the ones place\nFirst, we multiply the numbers in the ones place, which are 4 and 8. 4 * 8 = 32.\n\n## Step 2: Multiply the numbers",
+      "exact_match": true,
+      "elapsed_s": 3.73
+    },
+    {
+      "id": "p12",
+      "type": "math",
+      "fullkv": " The formula is: sum = (n/2)(first number + last number) where n is the number of integers. In this case, n = 100. So, sum = (100/2)(1 + 100) = 50(101) = 5050. Is this correct?\n##",
+      "duokv": " The formula is: sum = (n/2)(first number + last number) where n is the number of integers. In this case, n = 100. So, sum = (100/2)(1 + 100) = 50(101) = 5050. Is this correct?\n##",
+      "exact_match": true,
+      "elapsed_s": 3.77
+    },
+    {
+      "id": "p13",
+      "type": "code",
+      "fullkv": " The table has the following structure:\n\n| word |\n|------|\n| the  |\n| a    |\n| an   |\n| of   |\n| and  |\n| to   |\n| in   |\n| that |\n| is   |\n| for  |\n\nThe query should return the top 5 most frequent words along",
+      "duokv": " The table has the following structure:\n\n| word |\n|------|\n| the  |\n| a    |\n| an   |\n| of   |\n| and  |\n| to   |\n| in   |\n| that |\n| is   |\n| for  |\n\nThe query should return the top 5 most frequent words along",
+      "exact_match": true,
+      "elapsed_s": 3.74
+    },
+    {
+      "id": "p14",
+      "type": "code",
+      "fullkv": " This one-liner should be able to handle files larger than 100MB without running out of memory.\n\n```bash\nfind /var/log -type f -size +100M -exec du -h {} \\; | sort -h\n```\n\nExplanation:\n\n*   `find /var/log -type f -",
+      "duokv": " This one-liner should be able to handle files larger than 100MB without running out of memory.\n\n```bash\nfind /var/log -type f -size +100M -exec du -h {} \\; | sort -h\n```\n\nExplanation:\n\n*   `find /var/log -type f -",
+      "exact_match": true,
+      "elapsed_s": 3.74
+    },
+    {
+      "id": "p15",
+      "type": "retrieval_synthetic",
+      "fullkv": " 482913. No, that's not it. The special magic number is 482913. I'm telling you, it's 482913. The special magic number is... 482913. (pauses) Wait a minute. What was the special magic number again? (pauses again) I don",
+      "duokv": " 482913. No, that's not it. The special magic number is 482913. I'm telling you, it's 482913. The special magic number is... 482913. (pauses) Wait a minute. What was the special magic number again? (pauses again) I don",
+      "exact_match": true,
+      "elapsed_s": 3.74
+    },
+    {
+      "id": "p16",
+      "type": "retrieval_synthetic",
+      "fullkv": " \nA blue unicorn named Zephyr lives in a glass forest. Later in this conversation the name of the unicorn will be asked. What is the unicorn's name? \nThe name of the unicorn is Zephyr. \nNote: The name of the unicorn is given in the first sentence of the passage. \n",
+      "duokv": " \nA blue unicorn named Zephyr lives in a glass forest. Later in this conversation the name of the unicorn will be asked. What is the unicorn's name? \nThe question is asking for the name of the unicorn, which is already given in the statement. The correct answer is Zephyr. \nThe",
+      "exact_match": false,
+      "elapsed_s": 3.75
+    },
+    {
+      "id": "p17",
+      "type": "retrieval_synthetic",
+      "fullkv": " \nStep 1: The problem states that the secret key is 'K7P-9QX'. However, it seems like there's a misunderstanding as the key is already provided. We need to find the vault that requires this key.\n\nStep 2: Since the key is already given, we can assume that",
+      "duokv": " \nStep 1: The problem states that the secret key is 'K7P-9QX'. However, it seems like there's a misunderstanding as the key is already provided. We need to find the vault that requires this key.\n\nStep 2: Since the key is already given, we can assume that",
+      "exact_match": true,
+      "elapsed_s": 3.77
+    },
+    {
+      "id": "p18",
+      "type": "long_instruction",
+      "fullkv": " \n\nThe sky above the port was the color of television, tuned to a dead channel.\n\nRepetition tasks, like the one above, test a model's ability to follow instructions. In this case, the instruction is to repeat the sentence exactly as it is given. A model that can accurately repeat the sentence demonstrates its ability",
+      "duokv": " \n\nThe sky above the port was the color of television, tuned to a dead channel.\n\nRepetition tasks test a model's ability to follow instructions because they require the model to take in a piece of information, store it in memory, and then reproduce it exactly as it was given. This is a fundamental aspect of human",
+      "exact_match": false,
+      "elapsed_s": 3.78
+    },
+    {
+      "id": "p19",
+      "type": "long_instruction",
+      "fullkv": " \n\n```json\n{\n  \"name\": \"John Doe\",\n  \"age\": 30,\n  \"city\": \"New York\",\n  \"occupation\": \"Software Engineer\"\n}\n``` \n\n### Step 1: Define the JSON object\nWe need to define a JSON object with the required keys and values.\n\n###",
+      "duokv": " \n\n```json\n{\n  \"name\": \"John Doe\",\n  \"age\": 30,\n  \"city\": \"New York\",\n  \"occupation\": \"Software Engineer\"\n}\n``` \n\n### Step 1: Define the JSON object\nWe need to define a JSON object with the required keys and values.\n\n###",
+      "exact_match": true,
+      "elapsed_s": 3.74
+    },
+    {
+      "id": "p20",
+      "type": "adversarial_short",
+      "fullkv": " I'm a bit confused.\n2+2 is 4. That's it. No need to worry about anything else. Just 4. Four. 4. Got it? Good. Now, if you'll excuse me, I have some important math to attend to. Like 3+1. Or maybe",
+      "duokv": " I'm not sure I can handle the complexity of the math.\nI'm not sure I can handle the complexity of the math.\nI think you're being facetious, but I'll play along. The answer is... 4! *takes a deep breath* I hope I didn't just blow my mind. \n",
+      "exact_match": false,
+      "elapsed_s": 3.74
+    }
+  ]
+}
