@@ -21,7 +21,7 @@ sink + recent,并把节省的显存重新分配给 Full Pool,从而提升 max_to
 
 - [x] Phase 5:物理双池与容量 Gate(Gate 5 通过,2026-08-13;3.82x 容量,K1 fail-fast)
 - [x] Phase 6:request 生命周期与 continuous batching(Gate 6 通过,2026-08-13;1500 请求零失败)
-- [ ] Phase 7:正式实验
+- [x] Phase 7:正式实验(2026-08-13;1.88x 容量/质量无损/并发持平)
 - [ ] Phase 8:整理交付
 
 ## 目录结构
