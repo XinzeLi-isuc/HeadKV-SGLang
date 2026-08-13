@@ -1,0 +1,9 @@
+=== DuoKV Gate 3 smoke ===
+时间: 2026-08-13 22:27 (commit 9d3ff5c13f7f3e0c855131504b0d2939b7c0f1e3)
+命令: --enable-headkv --headkv-policy duo --headkv-pattern-path <duo-3.1-8B pattern> --headkv-full-head-ratio 0.5
+
+Gate 3 日志:
+  [HeadKV] policy=duo mask=[32,8] full=128 compact=128 ratio=0.5 sink=128 recent=256 window=384 R=32
+  T0=204824 Tf=397360 Tc=12288 predicted_gain=1.940x
+  KV Cache allocated #tokens: 397360
+  4K smoke: 1.792s, 输出与 FullKV 逐字一致
