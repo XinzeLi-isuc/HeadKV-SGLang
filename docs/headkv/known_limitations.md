@@ -3,14 +3,13 @@
 > Phase 1 交付物,2026-08-13。基于代码逆向发现的现状问题,
 > 与计划书修订表/设计文档 §1.4/§4.5 对应。全部有真实行号。
 
-## K1. comp 池耗尽静默降级(计划书 Phase 5 要点 5 / 设计 §4.5)
+## K1. comp 池耗尽静默降级(计划书 Phase 5 要点 5 / 设计 §4.5)**已修复 2026-08-13**
 
 - 位置:allocator.py `alloc_comp_window`(L349-354 返回 0);
   backend `_get_comp_base`(L202/L215 返回 0);
-  `_update_comp_mapping_extend` L287-288 `continue`(静默跳过);
-  `_update_comp_mapping_decode` L259-263(写 0)
-- 后果:超过 max_comp_chunks 的请求 comp heads 读 dummy slot,输出错误无提示
-- 修复:fail-fast(RuntimeError + comp 池状态日志),见 DESIGN §4.5
+  `_update_comp_mapping_extend` L287-288(原 `continue` 静默跳过)
+- 原后果:超过 max_comp_chunks 的请求 comp heads 读 dummy slot,输出错误无提示
+- 修复:extend 路径 comp_base==0 抛 RuntimeError(含池状态),commit 03a66988
 
 ## K2. mask 二值化不可复现(计划书修订 D1)
 

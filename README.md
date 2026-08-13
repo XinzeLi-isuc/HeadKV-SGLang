@@ -19,7 +19,7 @@ sink + recent,并把节省的显存重新分配给 Full Pool,从而提升 max_to
 - [x] Phase 3:双池接入(Gate 3 通过,2026-08-13;T0=204824→Tf=397360,1.94x)
 - [x] Phase 4:attention 语义正确性(Gate 4 通过,2026-08-13;45 单测 + 20/20 E2E 一致)
 
-- [ ] Phase 5:物理双池与容量 Gate
+- [x] Phase 5:物理双池与容量 Gate(Gate 5 通过,2026-08-13;3.82x 容量,K1 fail-fast)
 - [ ] Phase 6:request 生命周期与 continuous batching
 - [ ] Phase 7:正式实验
 - [ ] Phase 8:整理交付
