@@ -1,0 +1,7 @@
+ctx_len,system,median_e2e_s,tok_per_s
+4096,fullkv,1.041,30.29
+4096,duokv,1.375,23.03
+8192,fullkv,1.377,23.24
+8192,duokv,1.712,18.72
+16384,fullkv,2.121,15.09
+16384,duokv,2.447,13.09

@@ -1,0 +1,5 @@
+workload,system,req_per_s,p50_s,p95_s,max_s,n
+memory_light,fullkv,7.38,1.09,1.1,1.57,443
+memory_light,duokv,5.73,1.42,1.44,1.74,344
+memory_bound,fullkv,1.33,12.22,12.32,12.32,80
+memory_bound,duokv,1.33,12.22,12.28,12.29,80
