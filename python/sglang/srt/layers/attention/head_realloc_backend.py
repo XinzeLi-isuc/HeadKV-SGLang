@@ -290,7 +290,15 @@ class HeadReallocAttnBackend(AttentionBackend):
             # Get or allocate comp chunk for this request
             comp_base = self._get_comp_base(req_pool_idx)
             if comp_base == 0:
-                continue  # No comp available, skip
+                # comp 池耗尽:fail-fast(原实现静默跳过,导致 comp heads
+                # attend dummy slot 产生错误输出,无法察觉)
+                raise RuntimeError(
+                    "HeadKV comp pool exhausted: no comp chunk available for "
+                    f"req_pool_idx={req_pool_idx}. "
+                    f"comp_chunks_available={self._allocator_ref.comp_chunks_available()}/"
+                    f"{self._allocator_ref.max_comp_chunks}. "
+                    "Increase max_running_requests budget or reduce window size."
+                )
 
             # Get full_locs for the new tokens
             full_locs = self.req_to_token[
