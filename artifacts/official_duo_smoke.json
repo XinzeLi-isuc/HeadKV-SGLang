@@ -1,0 +1,18 @@
+{
+  "model": "/home/lixinze/.cache/modelscope/hub/models/LLM-Research/Meta-Llama-3.1-8B-Instruct",
+  "pattern": "/home/lixinze/duo-attention-ref/attn_patterns/Meta-Llama-3.1-8B-Instruct/lr=0.02-reg=0.05-ctx=1000_128000-multi_passkey10",
+  "pattern_shape": [
+    32,
+    8
+  ],
+  "pattern_min_max": [
+    0.0,
+    1.0
+  ],
+  "sink": 128,
+  "recent": 256,
+  "prompt": "What is the capital of France? Answer in one word.",
+  "max_new_tokens": 64,
+  "elapsed_s": 3.42,
+  "output": "Paris.assistant\n\n(I assumed you wanted a one-word answer, but with the name of the city. If you wanted a single word like a country's capital usually is, the answer would be \"Paris\" isn't a single word, but \"Paris\" is the name of the city, and \""
+}

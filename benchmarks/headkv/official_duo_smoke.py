@@ -55,20 +55,29 @@ def main():
     enable_duo_attention_eval(model, heads, sink_size=sink, recent_size=recent)
 
     # 5. 单请求生成(temperature=0)
+    # 注意:duo_attn patch 的模型级 forward 是 transformers v4.34 协议(tuple KV cache),
+    # 与 transformers 4.56 的 generate(DynamicCache/cache_position)不兼容。
+    # 因此这里手写 4.34 风格 decode 循环,遵守 duo_attn 的 tuple cache 协议。
     msgs = [{"role": "user", "content": args.prompt}]
     ids = tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt").to(dev)
     t0 = time.time()
+    generated = ids
+    past = None
     with torch.inference_mode():
-        out_ids = model.generate(
-            ids,
-            max_new_tokens=args.max_new_tokens,
-            do_sample=False,
-            temperature=None,
-            top_p=None,
-            use_cache=True,
-        )
+        for _ in range(args.max_new_tokens):
+            out = model(
+                input_ids=generated if past is None else generated[:, -1:],
+                past_key_values=past,
+                use_cache=True,
+                return_dict=True,
+            )
+            past = out.past_key_values
+            next_id = out.logits[:, -1, :].argmax(dim=-1, keepdim=True)
+            generated = torch.cat([generated, next_id], dim=1)
+            if next_id.item() == model.config.eos_token_id:
+                break
     dt = time.time() - t0
-    gen = out_ids[0][ids.shape[1]:]
+    gen = generated[0][ids.shape[1]:]
     text = tok.decode(gen, skip_special_tokens=True)
 
     result = {
