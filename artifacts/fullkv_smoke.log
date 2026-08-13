@@ -1,0 +1,17 @@
+=== FullKV smoke server 日志(关键行) ===
+启动: 2026-08-13 21:31:45 (PATH+NO_PROXY 修正后)
+commit: 973b5e41782be7c49978d9c01126c25708d047dc
+命令: python -m sglang.launch_server --model-path ... --port 30000 --mem-fraction-static 0.85 --max-running-requests 32 --disable-radix-cache --disable-cuda-graph --attention-backend flashinfer
+环境: rlkv-eval (py3.10 / torch 2.8.0+cu128 / flashinfer 0.3.1 / triton 3.4.0)
+注意: 本次 GPU 0 有上一轮崩溃进程显存残留, T0=169437 非干净基线(干净基线=204824)
+
+{"model_path":"/home/lixinze/.cache/modelscope/hub/models/LLM-Research/Meta-Llama-3.1-8B-Instruct","tokenizer_path":"/home/lixinze/.cache/modelscope/hub/models/LLM-Research/Meta-Llama-3.1-8B-Instruct","is_generation":true,"preferred_sampling_params":null,"weight_version":"default"}
+{
+  "port": 30000,
+  "prompt_file": "artifacts/prompt_4k.txt",
+  "prompt_tokens": 3627,
+  "max_new_tokens": 32,
+  "elapsed_s": 1.442,
+  "text": "-context inference. Systems like PagedAttention manage the KV cache in fixed-size blocks so that memory fragmentation is reduced and batches of concurrent requests can share GPU memory efficiently",
+  "meta": {}
+}

@@ -41,14 +41,14 @@ def main():
     heads = load_full_attention_heads(args.pattern, filename="full_attention_heads.tsv")
     print(f"[smoke] pattern shape={heads.shape} min={heads.min():.4f} max={heads.max():.4f}")
 
-    # 3. 加载模型(本地,bf16,GPU 1)
+    # 3. 加载模型(本地,bf16;device 用当前可见设备,CUDA_VISIBLE_DEVICES 已重映射)
+    dev = "cuda"  # 受 CUDA_VISIBLE_DEVICES 约束,进程内恒为 cuda:0
     tok = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(
         args.model,
         torch_dtype=torch.bfloat16,
-        device_map="cuda:1",
         trust_remote_code=True,
-    )
+    ).to(dev)
     model.eval()
 
     # 4. 启用 DuoAttention eval patch
@@ -56,7 +56,7 @@ def main():
 
     # 5. 单请求生成(temperature=0)
     msgs = [{"role": "user", "content": args.prompt}]
-    ids = tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt").to("cuda:1")
+    ids = tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt").to(dev)
     t0 = time.time()
     with torch.inference_mode():
         out_ids = model.generate(

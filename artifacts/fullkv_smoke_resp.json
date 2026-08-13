@@ -1,0 +1,9 @@
+{
+  "port": 30000,
+  "prompt_file": "artifacts/prompt_4k.txt",
+  "prompt_tokens": 3627,
+  "max_new_tokens": 32,
+  "elapsed_s": 1.442,
+  "text": "-context inference. Systems like PagedAttention manage the KV cache in fixed-size blocks so that memory fragmentation is reduced and batches of concurrent requests can share GPU memory efficiently",
+  "meta": {}
+}

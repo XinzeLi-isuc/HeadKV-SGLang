@@ -43,15 +43,30 @@ cd ~/rlkv/sglang && git rev-parse HEAD
 nvidia-smi --query-gpu=index,name,memory.used,memory.total --format=csv,noheader
 ```
 
-## 运行入口(Phase 0 smoke)
+## 运行入口(Phase 0 smoke,已实测通过 2026-08-13 21:32)
+
+**两个必须的环境修正(缺一不可):**
+1. `PATH` 必须包含 `~/miniconda3/envs/rlkv-eval/bin`(flashinfer JIT 编译需要 ninja,
+   直接用 python 绝对路径调用时 PATH 缺失 → FileNotFoundError: ninja)
+2. `NO_PROXY="127.0.0.1,localhost"`(本机 http_proxy=127.0.0.1:7884 会劫持指向
+   本服务器的请求,内置 warmup 用 requests 走代理 → 502 warmup 失败)
 
 ```bash
+export PATH=/home/lixinze/miniconda3/envs/rlkv-eval/bin:$PATH
+export NO_PROXY="127.0.0.1,localhost"
 # FullKV smoke (GPU 0)
-CUDA_VISIBLE_DEVICES=0 ~/miniconda3/envs/rlkv-eval/bin/python -m sglang.launch_server \
+CUDA_VISIBLE_DEVICES=0 python -m sglang.launch_server \
   --model-path ~/.cache/modelscope/hub/models/LLM-Research/Meta-Llama-3.1-8B-Instruct \
   --port 30000 --mem-fraction-static 0.85 --max-running-requests 32 \
-  --disable-radix-cache --attention-backend flashinfer
+  --disable-radix-cache --disable-cuda-graph --attention-backend flashinfer
 ```
+
+实测结果(2026-08-13 21:32):
+- server 就绪标志:"The server is fired up and ready to roll!"(warmup 首请求含
+  flashinfer JIT 编译约 39s)
+- 4K prompt → 32 tokens,elapsed 1.44s,输出正确(artifacts/fullkv_smoke_resp.json)
+- **T0 基线注意**:干净 GPU 0 上 max_total_num_tokens=204824;若 GPU 有残留进程,
+  会缩水(实测 169437)。正式容量实验前必须 nvidia-smi 确认 0 MiB 再启动。
 
 ## 未决项(不阻塞 Phase 0)
 
