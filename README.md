@@ -15,7 +15,7 @@ sink + recent,并把节省的显存重新分配给 Full Pool,从而提升 max_to
 - [x] 环境核查:rlkv-eval env 零改动可用(见 docs/headkv/env.md)
 - [x] Phase 0:环境冻结 + FullKV/Official Duo smoke(Gate 0 全绿,2026-08-13)
 - [x] Phase 1:RLKV 调用链逆向(Gate 1 通过,2026-08-13;10 问全答 + 三者关系图)
-- [ ] Phase 2:HeadPolicy / Duo loader / partition / budget
+- [x] Phase 2:HeadPolicy / Duo loader / partition / budget(Gate 2 通过,2026-08-13;33 单测)
 - [ ] Phase 3:双池接入
 - [ ] Phase 4:attention 语义正确性
 - [ ] Phase 5:物理双池与容量 Gate

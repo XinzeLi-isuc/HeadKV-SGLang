@@ -72,3 +72,8 @@ CUDA_VISIBLE_DEVICES=0 python -m sglang.launch_server \
 
 - dtype: 模型原生 bf16,FullKV/DuoKV 同源即可(倾向 bf16 对齐权重,避免额外转换)
 - `--mem-fraction-static` 默认 0.9,smoke 用 0.85 留安全边际;正式容量实验统一
+
+## 工具补充记录
+
+- 2026-08-13:rlkv-eval 补装 pytest 9.1.1(开发测试工具,非运行时依赖;
+  其他 env 均有 pytest,仅 rlkv-eval 缺失)
