@@ -1549,6 +1549,19 @@ class ModelRunner:
                     enable_kvcache_transpose=False,
                     device=self.device,
                 )
+            elif self.server_args.enable_headkv:
+                self.headkv_head_masks, size_full, size_comp = self._init_headkv()
+                self.max_total_num_tokens = size_full
+                self.token_to_kv_pool = HeadReallocKVPool(
+                    size_full=size_full,
+                    size_comp=size_comp,
+                    head_masks=self.headkv_head_masks,
+                    head_dim=self.model_config.head_dim,
+                    layer_num=self.num_effective_layers,
+                    dtype=self.kv_cache_dtype,
+                    device=self.device,
+                    enable_memory_saver=self.server_args.enable_memory_saver,
+                )
             elif self.server_args.enable_rlkv_inference:
                 self.rlkv_head_masks = self._load_rlkv_head_masks()
                 sink = self.server_args.sink_window_size
@@ -1633,6 +1646,16 @@ class ModelRunner:
                             device=self.device,
                             kvcache=self.token_to_kv_pool,
                             need_sort=need_sort,
+                        )
+                    elif self.server_args.enable_headkv:
+                        self.token_to_kv_pool_allocator = HeadReallocAllocator(
+                            self.max_total_num_tokens,
+                            self.token_to_kv_pool.size_comp,
+                            dtype=self.kv_cache_dtype,
+                            device=self.device,
+                            kvcache=self.token_to_kv_pool,
+                            need_sort=need_sort,
+                            window_size=self.headkv_sink_size + self.headkv_recent_size,
                         )
                     elif self.server_args.enable_rlkv_inference:
                         self.token_to_kv_pool_allocator = HeadReallocAllocator(
@@ -1733,6 +1756,65 @@ class ModelRunner:
             }
         )
         return attn_backend
+
+    def _init_headkv(self):
+        """HeadKV 初始化:policy → global mask → TP partition → budget。
+
+        返回 (tp_head_masks, size_full, size_comp),并打印 Gate 3 启动日志。
+        """
+        from sglang.srt.headkv.budget import compute
+        from sglang.srt.headkv.config import HeadKVConfig
+        from sglang.srt.headkv.partition import to_tp_local
+        from sglang.srt.headkv.policy import HeadPolicy
+
+        cfg = HeadKVConfig(
+            enable=True,
+            policy=self.server_args.headkv_policy,
+            pattern_path=self.server_args.headkv_pattern_path,
+            full_head_ratio=self.server_args.headkv_full_head_ratio,
+            threshold=self.server_args.headkv_threshold,
+            sink_size=self.server_args.headkv_sink_size,
+            recent_size=self.server_args.headkv_recent_size,
+            max_running_requests=self.server_args.max_running_requests,
+        )
+        cfg.validate()
+
+        policy = HeadPolicy.create(cfg)
+        global_mask = policy.load_global_kv_mask(self.model_config)
+
+        tp_size = get_attention_tp_size()
+        num_kv_heads_per_tp = self.model_config.get_num_kv_heads(tp_size)
+        tp_mask = to_tp_local(global_mask, self.tp_rank, tp_size, num_kv_heads_per_tp)
+
+        total_full = sum(int(m.sum().item()) for m in tp_mask.values())
+        total_comp = num_kv_heads_per_tp * len(tp_mask) - total_full
+        sink = policy.sink_size()
+        recent = policy.recent_size()
+        T0 = self.max_total_num_tokens  # FullKV profiling 基线(进入本分支前的值)
+
+        budget = compute(
+            T0=T0, F=total_full, C=total_comp,
+            R=int(self.server_args.max_running_requests), V=sink + recent,
+        )
+
+        # 供 allocator / backend 复用 policy 解析的 window(不读 RLKV 默认 16/32)
+        self.headkv_sink_size = sink
+        self.headkv_recent_size = recent
+
+        s = policy.summarize()
+        logger.info(
+            "[HeadKV] policy=%s pattern_path=%s mask=%s layers=%d kv_heads/layer=%d "
+            "full_heads=%d compact_heads=%d nominal_ratio=%s effective_ratio=%s "
+            "sink=%d recent=%d window=%d max_running_requests=%d T0=%d Tf=%d Tc=%d "
+            "predicted_gain=%.3fx",
+            s["policy"], s["pattern_path"], s["mask_shape"], s["num_layers"],
+            s["num_kv_heads_per_layer"], s["full_heads"], s["compact_heads"],
+            s["nominal_full_ratio"], s["effective_full_ratio"],
+            sink, recent, sink + recent,
+            self.server_args.max_running_requests,
+            T0, budget.Tf, budget.Tc, budget.predicted_gain,
+        )
+        return tp_mask, budget.Tf, budget.Tc
 
     def _load_rlkv_head_masks(self):
         """Load adapter weights and binarize into per-layer head masks for RLKV inference."""
@@ -1855,6 +1937,16 @@ class ModelRunner:
 
                 logger.warning("MixedTritonAttnBackend")
                 return MixedTritonAttnBackend(self)
+            elif self.server_args.enable_headkv:
+                from sglang.srt.layers.attention.head_realloc_backend import (
+                    HeadReallocAttnBackend,
+                )
+
+                # 双池已在 init_memory_pool_and_cache 建立,headkv_head_masks 必存在
+                logger.info("HeadReallocAttnBackend enabled (HeadKV)")
+                backend = HeadReallocAttnBackend(self, self.headkv_head_masks)
+                backend._allocator_ref = self.token_to_kv_pool_allocator
+                return backend
             elif self.server_args.enable_rlkv_inference:
                 from sglang.srt.layers.attention.head_realloc_backend import (
                     HeadReallocAttnBackend,

@@ -337,6 +337,15 @@ class ServerArgs:
     enable_rlkv_inference: bool = False
     rlkv_sparsity: float = 0.5
 
+    # HeadKV inference(policy-decoupled head-wise KV;与 RLKV 互斥)
+    enable_headkv: bool = False
+    headkv_policy: str = "duo"
+    headkv_pattern_path: Optional[str] = None
+    headkv_full_head_ratio: Optional[float] = None
+    headkv_threshold: Optional[float] = None
+    headkv_sink_size: Optional[int] = None
+    headkv_recent_size: Optional[int] = None
+
     # Optimization/debug options
     disable_radix_cache: bool = False
     cuda_graph_max_bs: Optional[int] = None
@@ -562,6 +571,18 @@ class ServerArgs:
             self.disable_radix_cache = True
             logger.info(
                 "RLKV inference: using triton backend, radix cache disabled"
+            )
+
+        if self.enable_headkv:
+            if self.enable_rlkv_inference:
+                raise ValueError(
+                    "--enable-headkv and --enable-rlkv-inference are mutually exclusive"
+                )
+            if self.attention_backend is None:
+                self.attention_backend = "triton"
+            self.disable_radix_cache = True
+            logger.info(
+                "HeadKV inference: using triton backend, radix cache disabled"
             )
 
         if self.attention_backend == "torch_native":
@@ -1934,6 +1955,55 @@ class ServerArgs:
             default=ServerArgs.rlkv_sparsity,
             help="Sparsity level for RLKV head binarization (0-1). "
             "Higher means more heads are compressed.",
+        )
+
+        # HeadKV inference
+        parser.add_argument(
+            "--enable-headkv",
+            action="store_true",
+            help="Enable HeadKV inference (policy-decoupled head-wise KV cache). "
+            "Mutually exclusive with --enable-rlkv-inference.",
+        )
+        parser.add_argument(
+            "--headkv-policy",
+            type=str,
+            default=ServerArgs.headkv_policy,
+            help="HeadKV policy: duo | rlkv | manual.",
+        )
+        parser.add_argument(
+            "--headkv-pattern-path",
+            type=str,
+            default=ServerArgs.headkv_pattern_path,
+            help="Pattern/adapter directory (duo: full_attention_heads.tsv + config.json; "
+            "rlkv: adapter_weights.tsv; manual: mask file).",
+        )
+        parser.add_argument(
+            "--headkv-full-head-ratio",
+            type=float,
+            default=ServerArgs.headkv_full_head_ratio,
+            help="Deterministic top-k full-head ratio (0,1]. Mutually exclusive with "
+            "--headkv-threshold.",
+        )
+        parser.add_argument(
+            "--headkv-threshold",
+            type=float,
+            default=ServerArgs.headkv_threshold,
+            help="Binarization threshold: score >= T is full head. "
+            "Mutually exclusive with --headkv-full-head-ratio.",
+        )
+        parser.add_argument(
+            "--headkv-sink-size",
+            type=int,
+            default=ServerArgs.headkv_sink_size,
+            help="Explicit sink window override (highest priority; else pattern "
+            "config.json deploy_sink_size > sink_size).",
+        )
+        parser.add_argument(
+            "--headkv-recent-size",
+            type=int,
+            default=ServerArgs.headkv_recent_size,
+            help="Explicit recent window override (highest priority; else pattern "
+            "config.json deploy_recent_size > recent_size).",
         )
         # Optimization/debug options
         parser.add_argument(

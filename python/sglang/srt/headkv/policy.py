@@ -37,6 +37,10 @@ class HeadPolicy(abc.ABC):
     @abc.abstractmethod
     def recent_size(self) -> int: ...
 
+    def summarize(self) -> dict:
+        """可日志化的统计信息;子类覆写提供更全字段。"""
+        raise NotImplementedError
+
     @classmethod
     def create(cls, cfg: HeadKVConfig) -> "HeadPolicy":
         from .duo_policy import DuoAttentionPolicy

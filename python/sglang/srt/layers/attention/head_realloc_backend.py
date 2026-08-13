@@ -93,8 +93,13 @@ class HeadReallocAttnBackend(AttentionBackend):
 
         max_bs = model_runner.req_to_token_pool.size
 
-        self.sink_window_size = model_runner.server_args.sink_window_size
-        self.local_window_size = model_runner.server_args.recent_window_size
+        # HeadKV 模式下优先用 policy 解析的 window(RLKV 默认 16/32 不适用 Duo 128/256)
+        self.sink_window_size = getattr(
+            model_runner, "headkv_sink_size", None
+        ) or model_runner.server_args.sink_window_size
+        self.local_window_size = getattr(
+            model_runner, "headkv_recent_size", None
+        ) or model_runner.server_args.recent_window_size
         self.num_head = (
             model_runner.model_config.num_attention_heads // get_attention_tp_size()
         )
