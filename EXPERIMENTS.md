@@ -250,3 +250,87 @@ python benchmarks/headkv/current_main/s5_niah.py             # 9 题 4K, 30090 v
 | artifacts/s5_rlkv_smoke_main.json | RLKV 3 prompts 生成 |
 | artifacts/s5_niah_main.json | NIAH 4K 9 题 fullkv/duokv |
 | benchmarks/headkv/current_main/ | S5 全部脚本 + start_server.sh |
+
+## 12. 实验标注体系 E1-E5(2026-08-14, 全部 splits=32 下有效)
+
+> 统一协议: GPU=A6000, model=Meta-Llama-3.1-8B-Instruct(bf16, GQA),
+> mem-fraction=0.85, TP=1, v0.5.2(feat/headkv-duo)主数据线。
+> **重要**: 发现并修复 triton attention 长上下文退化 —— 默认
+> `--triton-attention-num-kv-splits 8` 在 ≥4K 复杂文本下生成退化
+> (重复 token 循环), splits=32 后 4K-31K 全域恢复(与 flashinfer/官方
+> HF 输出一致)。E2/E3/E4/E5-LongBench 全部在 splits=32 下重跑。
+
+### E1 KV Capacity(results/exp1_capacity.csv)
+
+| effective ratio | full pool GB | comp pool GB | max_total_tokens | max_running |
+| --- | --- | --- | --- | --- |
+| 0.25 | 25.639 | 1.208 | 782432 | 32 |
+| 0.50 | 26.041 | 0.805 | 397360 | 32 |
+| 0.75 | 26.444 | 0.403 | 269002 | 32 |
+| 1.00 | 26.847 | 0.000 | 204824 | 32 |
+
+### E2 Context Length(results/exp2_context.csv, 3-run median, CG)
+
+| ctx | fullkv TTFT | headkv TTFT | Δ | fullkv TPOT | headkv TPOT |
+| --- | --- | --- | --- | --- | --- |
+| 4K | 0.448s | 0.448s | 0% | 0.0229s | 0.0234s |
+| 8K | 0.963s | 0.968s | +1% | 0.0234s | 0.0237s |
+| 16K | 2.357s | 2.087s | -11% | 0.0244s | 0.0241s |
+| 32K | 6.680s | 4.854s | **-27%** | 0.0265s | 0.0252s |
+
+> 长上下文 prefill 收益: comp heads 只处理 sink+recent 窗口, 32K 时
+> HeadKV prefill 快 27%(稀疏计算的实际收益)。
+
+### E3 Batch/Concurrency(artifacts/exp3_concurrency.json)
+
+| ctx | 关键点 | fullkv med | headkv med | Δ |
+| --- | --- | --- | --- | --- |
+| 8K | bs=96 | 41.87s | 40.45s | -3% |
+| 16K | bs=24 (393K tokens, 超 FullKV T0=204K 但 < HeadKV Tf=397K) | 37.53s | 34.19s | **-9%** |
+| 16K | bs=64 | 78.0s (P50>60s 不可用) | 92.3s | 均排队 |
+
+> 容量红利窗口: total KV ∈ (FullKV T0, HeadKV Tf] 时 HeadKV 不排队而
+> FullKV 排队(16K×24 快 9%)。超 HeadKV 容量后两者均排队, HeadKV
+> 无优势(双池 decode 开销略高)。SGLang 调度器排队机制使"失败"不出现,
+> 以延迟爆炸为不可用判据。
+
+### E4 Online Serving(artifacts/exp4_online.json, 60s 流, 8 workers)
+
+| workload | 指标 | fullkv | headkv |
+| --- | --- | --- | --- |
+| memory_light (512 tok) | req/s | 7.35 | 7.30 |
+| | TTFT p50/p95 | 0.322/0.362s | 0.258/0.331s |
+| | TPOT p50/p95 | 0.0234/0.031s | 0.0267/0.0312s |
+| memory_bound (16K tok, 128 gen) | req/s | 0.53 | **0.67 (+26%)** |
+| | output tok/s | 68.3 | **85.3 (+25%)** |
+| | TTFT p50/p95 | 7.008/11.028s | 7.028/11.031s |
+| | TPOT p50/p95 | 0.0774/0.111s | **0.0713/0.106s** |
+
+### E5 Quality(results/exp5_quality.csv, 官方协议 30 条)
+
+NIAH 4K(9 题 magic 协议): Full(HF) 9/9, Official Duo(HF) 9/9,
+FullKV(SG) 9/9, HeadKV(SG) 9/9 —— **全部无损**。
+
+LongBench F1:
+
+| task | Full (HF) | FullKV (SG) | Official Duo (HF) | HeadKV (SG) |
+| --- | --- | --- | --- | --- |
+| narrativeqa | 31.49 | 31.49 | 28.26 | **32.48** |
+| 2wikimqa | 21.35 | 20.38 | 20.98 | 18.89 |
+
+> narrativeqa 无损(HeadKV 32.48 ≥ Full 31.49); 2wikimqa 相对官方
+> duo 掉 2.1 F1(multi-hop 检索对 streaming head 更敏感, 30 条样本)。
+> 官方 HF 与 SGLang 端 fullkv 完全一致(narrativeqa 31.49=31.49),
+> 验证协议对齐有效。
+
+### 关键发现(面试素材)
+
+1. **triton attention num_kv_splits=8 长上下文退化**(默认参数 bug):
+   复杂文本 ≥4K 即退化, splits=32 修复, 4K-31K 全域与 flashinfer/
+   官方一致。诊断链: 官方 HF vs SGLang 输出对照 → flashinfer 对照 →
+   split 数假设 → 参数验证。
+2. **官方 DuoAttention 基线打通**: 独立 env(transformers 4.44.2,
+   flash-attn 2.8.1)跑官方 duo_attn.patch;官方代码与 transformers
+   ≥4.5x 不兼容(属性漂移 + TP), 需 4.44 + 单卡适配。
+3. 实验协议必须逐字段对齐(模板/max_gen/post_process/样本数),
+   否则 F1 差 100 倍(旧协议 0.14 vs 官方协议 31.5)。
