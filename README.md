@@ -5,30 +5,34 @@ head-reallocation runtime:Retrieval (Full) Heads 保存完整历史,Streaming
 (Compact) Heads 仅保存 sink + recent 窗口,节省的 KV 显存重新分配给 Full Pool,
 从而提升 max_total_tokens 与连续批处理并发容量。
 
-> 求职(AI Infra 推理框架/推理加速)项目,2026-08。MVP 已完成(Gate 0-7 全部通过)。
-> 设计文档:`DESIGN.md`;计划书:`HeadKV-SGLang_修订版项目计划书.md`。
+> 求职(AI Infra 推理框架/推理加速)项目,2026-08。**S 级完成**(双 policy 同一
+> runtime + CUDA Graph 深化)。
+> 设计:`DESIGN.md`;升级计划:`HeadKV-SGLang_S级升级计划书.md`;
+> 实验复现:`EXPERIMENTS.md`。
 
 ## 结果速览(实测,A6000, Meta-Llama-3.1-8B-Instruct)
 
 ```text
-KV token 容量:  T0=204824 → Tf=385072(ratio 0.5, 1.88x)
-               最高 3.82x(ratio 0.25),与预算公式逐位吻合
-质量:          NIAH 4K 9/9 无损;LongBench narrativeqa/2wikimqa F1 持平或略高
-吞吐:          单请求 -15~24%(eager 双路开销);长上下文高并发场景持平
-KV 占用:       等量负载 token usage FullKV 0.31 vs DuoKV 0.16(减半)
+KV token 容量:  T0=204824 → Tf=782432(ratio 0.25, 3.82x)
+               1.94x(ratio 0.5),与预算公式逐位吻合
+质量:          NIAH 4K 9/9 无损;LongBench 2 子任务 F1 持平(略高)
+生命周期:      1500 混合请求零失败,allocator 无泄漏
+单请求开销:    eager 固定 0.33s(启动成本,不随长度) → CUDA Graph 消除 90%+
+               (4K 绝对差 +0.334s → +0.030s)
+短请求吞吐:    eager -22% → CUDA Graph +3.7%(4.76 vs 4.59 req/s)
+decode 吞吐:   CUDA Graph 下 94~165 token/s(eager 约 20 量级)
+双 policy:     同一 runtime 支持 DuoAttentionPolicy 与 RLKVPolicy(输出一致,
+               同 effective ratio 质量对照,head 分布 Jaccard=0.446)
 ```
 
 ## 项目进度
 
-- [x] Phase 0 环境冻结与基线(Gate 0:FullKV + Official Duo smoke)
-- [x] Phase 1 RLKV 调用链逆向(Gate 1:10 问 + 生命周期图)
-- [x] Phase 2 HeadPolicy 抽象(Gate 2:33 单测,确定性二值化)
-- [x] Phase 3 双池接入(Gate 3:1.94x 容量,启动日志)
-- [x] Phase 4 attention 语义正确性(Gate 4:45 单测 + 20/20 E2E 一致)
-- [x] Phase 5 物理双池与容量 Gate(Gate 5:3.82x 单调,comp 耗尽 fail-fast)
-- [x] Phase 6 生命周期与 continuous batching(Gate 6:1500 请求零失败)
-- [x] Phase 7 正式实验(Exp A-E)
-- [x] Phase 8 整理交付
+- [x] Phase 0-8:MVP(A 级,2026-08-13,Gate 0-7)
+- [x] Phase S0:双 policy 统一入口(Gate S0,2026-08-14;70 单测)
+- [x] Phase S1/S2:双 policy 对照 + head 分布分析(Gate S1/S2)
+- [x] Phase S3:CUDA Graph 开启(Gate S3;0.33s 消除 90%+)
+- [ ] Phase S4:current-main 迁移(投递后深化,止损框架在升级计划书 §8)
+- [x] Phase S5:文档交付
 
 ## 代码结构
 
