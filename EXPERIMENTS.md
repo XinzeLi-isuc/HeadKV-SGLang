@@ -125,7 +125,23 @@ python benchmarks/headkv/analyze_head_distribution.py
 #   20 prompts 正确性 + 4K/8K/16K E2E + 短请求吞吐
 ```
 
-## 8. 数据文件索引
+## 8. 主张补证实验(2026-08-14)
+
+```bash
+# 实验 A:长上下文有界差异(8K/16K 分叉率,需 FullKV-CG:30060 + DuoKV-CG:30061)
+python benchmarks/headkv/run_expA.py
+# 预期:首 token 10/10 一致;逐 token 8K≈0.15/16K≈0.07;分叉后语义正确
+
+# 实验 B:NIAH 损失边界(需 4 server:fullkv 30060 / duo 0.25 30062 / 0.5 30061 / 0.75 30063)
+python benchmarks/headkv/run_expB.py
+# 预期:fullkv 6/6、duo 0.5/0.75 6/6、duo 0.25 2/6(损失边界)
+
+# 实验 C+D:32K/64K 服务能力 + CG 并发(需 30060/30061)
+python benchmarks/headkv/run_expCD.py
+# 预期:64K duokv -32%(FLOPs 收益);CG bs=32 duokv -2%
+```
+
+## 9. 数据文件索引
 
 | 文件 | 内容 |
 | --- | --- |

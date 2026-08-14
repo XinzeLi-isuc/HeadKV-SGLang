@@ -1,0 +1,38 @@
+{
+  "longctx_32768": {
+    "len": 32768,
+    "fullkv": 4.06,
+    "duokv": 3.55
+  },
+  "longctx_65536": {
+    "len": 65536,
+    "fullkv": 11.53,
+    "duokv": 7.84
+  },
+  "cg_conc_16": {
+    "bs": 16,
+    "fullkv": {
+      "wall_s": 10.5,
+      "median_s": 10.49,
+      "max_s": 10.5
+    },
+    "duokv": {
+      "wall_s": 10.5,
+      "median_s": 10.46,
+      "max_s": 10.47
+    }
+  },
+  "cg_conc_32": {
+    "bs": 32,
+    "fullkv": {
+      "wall_s": 21.1,
+      "median_s": 21.06,
+      "max_s": 21.07
+    },
+    "duokv": {
+      "wall_s": 20.7,
+      "median_s": 20.64,
+      "max_s": 20.66
+    }
+  }
+}

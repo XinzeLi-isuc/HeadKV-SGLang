@@ -1,0 +1,92 @@
+[
+  {
+    "len": 8192,
+    "seed": 0,
+    "first_tok_match": true,
+    "token_agreement": 0.0615,
+    "first_divergence_pos": 2,
+    "fullkv_head": "The final answer is: The bridge of the high platea",
+    "duokv_head": "Answer: The bridge of the high plateau. \nNote: The"
+  },
+  {
+    "len": 8192,
+    "seed": 1,
+    "first_tok_match": true,
+    "token_agreement": 0.2923,
+    "first_divergence_pos": 10,
+    "fullkv_head": "Answer: The market of the north valley was named C",
+    "duokv_head": "Answer: The market of the north valley. \nNote: The"
+  },
+  {
+    "len": 8192,
+    "seed": 2,
+    "first_tok_match": true,
+    "token_agreement": 0.1692,
+    "first_divergence_pos": 11,
+    "fullkv_head": "Answer: The river of the north valley.  The river ",
+    "duokv_head": "Answer: The river of the north valley. \nNote: The "
+  },
+  {
+    "len": 8192,
+    "seed": 3,
+    "first_tok_match": true,
+    "token_agreement": 0.0462,
+    "first_divergence_pos": 2,
+    "fullkv_head": "The final answer is: Eamon. \nNote: The text is a l",
+    "duokv_head": "Answer: The market of the eastern shore. \nNote: Th"
+  },
+  {
+    "len": 8192,
+    "seed": 4,
+    "first_tok_match": true,
+    "token_agreement": 0.1846,
+    "first_divergence_pos": 12,
+    "fullkv_head": "Answer: The palace of the eastern shore. \nBased on",
+    "duokv_head": "Answer: The palace of the eastern shore. \nNote: Th"
+  },
+  {
+    "len": 16384,
+    "seed": 0,
+    "first_tok_match": true,
+    "token_agreement": 0.0462,
+    "first_divergence_pos": 2,
+    "fullkv_head": "The final answer is: The bridge of the high platea",
+    "duokv_head": "Answer: The bridge of the high plateau was named D"
+  },
+  {
+    "len": 16384,
+    "seed": 1,
+    "first_tok_match": true,
+    "token_agreement": 0.1231,
+    "first_divergence_pos": 5,
+    "fullkv_head": "Answer: The market of the north valley. \nReasoning",
+    "duokv_head": "Answer: The name of the subject of place mentioned"
+  },
+  {
+    "len": 16384,
+    "seed": 2,
+    "first_tok_match": true,
+    "token_agreement": 0.1385,
+    "first_divergence_pos": 5,
+    "fullkv_head": "Answer: The river of the north valley.  The river ",
+    "duokv_head": "Answer: The name of the subject of place mentioned"
+  },
+  {
+    "len": 16384,
+    "seed": 3,
+    "first_tok_match": true,
+    "token_agreement": 0.0308,
+    "first_divergence_pos": 2,
+    "fullkv_head": "The final answer is: Eamon. \nNote: The text is a l",
+    "duokv_head": "Answer: The name of the subject of place mentioned"
+  },
+  {
+    "len": 16384,
+    "seed": 4,
+    "first_tok_match": true,
+    "token_agreement": 0.0308,
+    "first_divergence_pos": 2,
+    "fullkv_head": "The final answer is: The palace of the eastern sho",
+    "duokv_head": "Answer: Aldric. \nNote: The text is a series of fac"
+  }
+]
