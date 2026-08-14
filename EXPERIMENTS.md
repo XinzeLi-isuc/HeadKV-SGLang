@@ -199,3 +199,54 @@ python benchmarks/headkv/s4_correctness.py
 - [ ] S0 双入口输出一致
 - [ ] S1 容量只由 F/C/V 决定;Jaccard≈0.446
 - [ ] S3:4K 绝对差 ≤0.05s;短请求吞吐 ≥4.5 req/s
+
+## 11. S5 收尾:current main 剩余验证(2026-08-14)
+
+> 仓库:`~/sglang-main`(sglang 0.5.18.dev@e1c4db962 + headkv 迁移),env `headkv-main`。
+> 覆盖 phase-s4 报告遗留的 4 项:CUDA Graph 实测 / RLKV 启动验证 /
+> 逐 token 差异收尾 / 质量实验。
+
+### 11.1 修复(2 个独立问题, 3 个 commit)
+
+| commit | 问题 | 修复 |
+| --- | --- | --- |
+| f4bb0b68e9 | prefill CG capture 虚请求耗尽 comp 池(comp_chunks_available=0/32 崩溃) | headkv_backend 新增 `init_forward_metadata_for_capture`(out_graph 以 in_capture=True 跳过 comp 分配);prefill_cuda_graph_runner fallback 优先调用,其他 backend 不变 |
+| 29e4ab4d58 + b7981b5535 | RLKV policy 启动 AttributeError:ServerArgs 无 sink_window_size / 物化后只读 | window 默认 16/32 写入解析期 `_handle_headkv`;model_runner 局部变量 fallback |
+
+### 11.2 实验(4 server × 4 GPU, A6000, 同一模型/pattern)
+
+```bash
+export PATH=/home/lixinze/miniconda3/envs/headkv-main/bin:$PATH
+export NO_PROXY="127.0.0.1,localhost"
+# 4 个 server(见 benchmarks/headkv/current_main/start_server.sh)
+#   fullkv-cg:30090 (GPU0)   duokv-cg:30091 (GPU1, duo ratio 0.5)
+#   duokv-eager:30092 (GPU2) rlkv-eager:30093 (GPU3, sparsity 0.5)
+python benchmarks/headkv/current_main/s5_cg_correctness.py   # 20 prompts, 30090 vs 30091
+python benchmarks/headkv/current_main/s5_e2e_overhead.py     # 3-run median, 30091 vs 30092
+python benchmarks/headkv/current_main/s5_rlkv_smoke.py       # 3 prompts, 30093
+python benchmarks/headkv/current_main/s5_niah.py             # 9 题 4K, 30090 vs 30091
+```
+
+### 11.3 结果
+
+| 实验 | 结果 | 对照 |
+| --- | --- | --- |
+| CUDA Graph 正确性 | 首 token 20/20;逐 token 15/20 | eager 14/20(S4)→ CG 无回归,差异为已知 full 路径 kernel 细节 |
+| 单请求 E2E(4K+64) | CG 2.497s vs eager 3.049s(**-0.55s**) | v0.5.2 S3:CG 绝对差 +0.030s,current main 无启动开销 |
+| RLKV policy 启动+生成 | 3/3 语义正常(sparsity 0.5, window 16/32) | 与 v0.5.2 RLKV 行为一致 |
+| NIAH 4K(带 instruction) | fullkv 9/9, duokv 9/9 | v0.5.2 S1:duo 9/9,rlkv 9/9,无损保持 |
+
+> 踩坑:S5 NIAH 首版脚本漏了 v0.5.2 的 instruction 后缀
+> ("\n\nWhat is the special magic number...")与 max_new=16,
+> 模型按续写任务输出 filler 导致 miss;对齐 S1 协议后 9/9。
+> 实验口径必须逐字段对齐原脚本,不能只对齐"构建函数"。
+
+### 11.4 数据文件(新增)
+
+| 文件 | 内容 |
+| --- | --- |
+| artifacts/s5_cg_correctness_main.json | current main CG: 20 prompts 首 token/逐 token |
+| artifacts/s5_e2e_overhead_main.json | CG vs eager 3-run E2E |
+| artifacts/s5_rlkv_smoke_main.json | RLKV 3 prompts 生成 |
+| artifacts/s5_niah_main.json | NIAH 4K 9 题 fullkv/duokv |
+| benchmarks/headkv/current_main/ | S5 全部脚本 + start_server.sh |

@@ -34,7 +34,10 @@ decode 吞吐:   CUDA Graph 下 94~165 token/s(eager 约 20 量级)
 - [x] Phase S4:current SGLang main 端到端迁移(Gate S4,2026-08-14;
       sglang 0.5.18.dev@e1c4db962 上 E2E 打通, T0=204698→Tf=397108;
       独立 env headkv-main;headkv 算法包零改动)
-- [x] Phase S5:文档交付
+- [x] Phase S5:current main 收尾验证(2026-08-14;S4 遗留 4 项全关:
+      CG 实测 + RLKV 启动 + 质量;修复 CG capture comp 池耗尽与
+      ServerArgs 只读 2 个真实 bug,详见 EXPERIMENTS.md §11)
+- [x] Phase S6:文档交付
 
 ## 代码结构
 
@@ -97,9 +100,8 @@ HeadKV-SGLang/
 
 ## 未支持(MVP 范围外)
 
-- current SGLang main 迁移 / Prefix-Radix Cache / CUDA Graph 开启 /
-  speculative decoding / TP>1 / PD 分离 / KV offload / FP8-INT4 KV /
-  head 动态分类 / upstream PR
+- Prefix-Radix Cache / speculative decoding / TP>1 / PD 分离 / KV offload /
+  FP8-INT4 KV / head 动态分类 / upstream PR
 
 ## 运行
 
