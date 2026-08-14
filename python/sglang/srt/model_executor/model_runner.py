@@ -871,10 +871,11 @@ class ModelRunner:
         sa = self.server_args
         is_rlkv = sa.headkv_policy == "rlkv"
         if is_rlkv and sa.headkv_sink_size is None:
-            # RLKV 无 pattern config.json:window 用官方默认 16/32
-            sa.headkv_sink_size = sa.sink_window_size or 16
+            # RLKV 无 pattern config.json:window 用官方默认 16/32。
+            # (v0.5.2 的 sa.sink_window_size 在 current main ServerArgs 已不存在)
+            sa.headkv_sink_size = 16
         if is_rlkv and sa.headkv_recent_size is None:
-            sa.headkv_recent_size = sa.recent_window_size or 32
+            sa.headkv_recent_size = 32
 
         cfg = HeadKVConfig(
             enable=True,
