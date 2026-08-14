@@ -953,7 +953,16 @@ class PrefillCudaGraphRunner(BaseCudaGraphRunner):
         back to the generic eager init that BCG/TC_PIECEWISE use today."""
         attn_backend = self.model_runner.attn_backend
         if not self.use_captured_attn_metadata:
-            attn_backend.init_forward_metadata(forward_batch)
+            # Backends with a dedicated capture entry (e.g. HeadKV: virtual
+            # padded requests must not consume the comp pool) route through it;
+            # others keep the generic eager init that BCG/TC_PIECEWISE use.
+            capture_init = getattr(
+                attn_backend, "init_forward_metadata_for_capture", None
+            )
+            if capture_init is not None:
+                capture_init(forward_batch)
+            else:
+                attn_backend.init_forward_metadata(forward_batch)
             return
         metadata = attn_backend.init_forward_metadata_for_breakable_cuda_graph_capture(
             forward_batch

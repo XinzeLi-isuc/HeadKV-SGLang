@@ -370,6 +370,18 @@ class HeadReallocAttnBackend(AttentionBackend):
             MAX_NUM_SEQ=SCHEDULE_SEQ,
         )
 
+    def init_forward_metadata_for_capture(self, forward_batch: ForwardBatch):
+        """Capture-time metadata prep for the prefill CUDA graph runner.
+
+        Current main's prefill capture falls back to the eager entry
+        (``init_forward_metadata``) for backends without captured-metadata
+        support; HeadKV must instead skip comp-chunk allocation so virtual
+        padded requests do not consume the comp pool (decode capture already
+        passes ``in_capture=True`` via the decode runner).
+        """
+        self.init_forward_metadata_out_graph(forward_batch, in_capture=True)
+        self.init_forward_metadata_in_graph(forward_batch)
+
     def init_forward_metadata_out_graph(
         self, forward_batch: ForwardBatch, in_capture: bool = False
     ):
