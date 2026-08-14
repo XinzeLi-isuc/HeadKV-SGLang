@@ -815,6 +815,27 @@ class ModelRunner:
             self.memory_pool_config = memory_pool_config
 
         self.init_kv_cache_configurator()
+
+        # HeadKV:profile T0 with the default pipeline (no pool allocation),
+        # then build the head-wise Full/Compact dual pool directly.
+        if self.server_args.enable_headkv:
+            config = self.kv_cache_configurator._resolve_memory_pool_config(
+                self.pre_model_load_memory
+            )
+            t0 = config.max_total_num_tokens
+            self.max_running_requests = config.max_running_requests
+            from sglang.srt.mem_cache.memory_pool import ReqToTokenPool
+
+            self.req_to_token_pool = ReqToTokenPool(
+                int(config.max_running_requests) + 1,
+                self.model_config.context_len,
+                self.device,
+                self.server_args.enable_memory_saver,
+            )
+            self._init_headkv_pool(t0=t0)
+            self._init_post_memory_pool_components()
+            return
+
         result = self.kv_cache_configurator.configure(
             pre_model_load_memory=self.pre_model_load_memory
         )
@@ -831,6 +852,92 @@ class ModelRunner:
         self._unified_memory_pool = result.unified_memory_pool
 
         self._init_post_memory_pool_components()
+
+    def _init_headkv_pool(self, t0: int):
+        """HeadKV dual-pool construction for current SGLang main.
+
+        policy → global mask → TP partition → budget → HeadReallocKVPool +
+        HeadReallocAllocator. T0 comes from the default profiling pipeline.
+        """
+        from sglang.srt.headkv.budget import compute
+        from sglang.srt.headkv.config import HeadKVConfig
+        from sglang.srt.headkv.partition import to_tp_local
+        from sglang.srt.headkv.policy import HeadPolicy
+        from sglang.srt.mem_cache.headkv_pool import (
+            HeadReallocAllocator,
+            HeadReallocKVPool,
+        )
+
+        sa = self.server_args
+        is_rlkv = sa.headkv_policy == "rlkv"
+        if is_rlkv and sa.headkv_sink_size is None:
+            # RLKV 无 pattern config.json:window 用官方默认 16/32
+            sa.headkv_sink_size = sa.sink_window_size or 16
+        if is_rlkv and sa.headkv_recent_size is None:
+            sa.headkv_recent_size = sa.recent_window_size or 32
+
+        cfg = HeadKVConfig(
+            enable=True,
+            policy=sa.headkv_policy,
+            pattern_path=sa.headkv_pattern_path,
+            full_head_ratio=sa.headkv_full_head_ratio,
+            threshold=sa.headkv_threshold,
+            sink_size=sa.headkv_sink_size,
+            recent_size=sa.headkv_recent_size,
+            sparsity=sa.headkv_rlkv_sparsity,
+            max_running_requests=sa.max_running_requests,
+        )
+        cfg.validate()
+
+        policy = HeadPolicy.create(cfg)
+        global_mask = policy.load_global_kv_mask(self.model_config)
+        sink = policy.sink_size()  # duo:从 pattern config.json 解析;rlkv:默认/显式
+        recent = policy.recent_size()
+        attn_tp_size = get_parallel().attn_tp_size
+        num_kv_heads_per_tp = self.model_config.get_num_kv_heads(attn_tp_size)
+        tp_mask = to_tp_local(
+            global_mask, get_parallel().attn_tp_rank, attn_tp_size,
+            num_kv_heads_per_tp,
+        )
+
+        total_full = sum(int(m.sum().item()) for m in tp_mask.values())
+        total_comp = num_kv_heads_per_tp * len(tp_mask) - total_full
+        budget = compute(
+            T0=t0, F=total_full, C=total_comp,
+            R=int(sa.max_running_requests), V=sink + recent,
+        )
+
+        self.headkv_head_masks = tp_mask
+        self.headkv_sink_size = sink
+        self.headkv_recent_size = recent
+        self.max_total_num_tokens = budget.Tf
+        self.max_running_requests = int(sa.max_running_requests)
+
+        from sglang.srt.headkv.policy import model_num_layers
+
+        self.token_to_kv_pool = HeadReallocKVPool(
+            size_full=budget.Tf,
+            size_comp=budget.Tc,
+            head_masks=tp_mask,
+            head_dim=self.model_config.head_dim,
+            layer_num=model_num_layers(self.model_config),
+            dtype=self.kv_cache_dtype,
+            device=self.device,
+            enable_memory_saver=sa.enable_memory_saver,
+        )
+        need_sort = sa.disaggregation_mode in ("decode", "prefill")
+        self.token_to_kv_pool_allocator = HeadReallocAllocator(
+            budget.Tf, budget.Tc, self.kv_cache_dtype, self.device,
+            self.token_to_kv_pool, need_sort=need_sort,
+            window_size=sink + recent,
+        )
+
+        logger.info(
+            "[HeadKV] policy=%s pattern_path=%s full_heads=%d compact_heads=%d "
+            "sink=%d recent=%d T0=%d Tf=%d Tc=%d gain=%.3fx",
+            sa.headkv_policy, sa.headkv_pattern_path, total_full, total_comp,
+            sink, recent, t0, budget.Tf, budget.Tc, budget.predicted_gain,
+        )
 
     def _init_post_memory_pool_components(self):
         """Post-pool component wiring, split out of alloc_memory_pool so forks

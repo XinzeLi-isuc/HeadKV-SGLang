@@ -39,6 +39,17 @@ def register_attention_backend(name):
     return decorator
 
 
+@register_attention_backend("headkv")
+def create_headkv_backend(runner):
+    """HeadKV head-reallocation backend (head-wise Full/Compact dual pool)."""
+    from sglang.srt.layers.attention.headkv_backend import HeadReallocAttnBackend
+
+    logger.info("HeadReallocAttnBackend enabled (HeadKV)")
+    backend = HeadReallocAttnBackend(runner, runner.headkv_head_masks)
+    backend._allocator_ref = runner.token_to_kv_pool_allocator
+    return backend
+
+
 @register_attention_backend("flashinfer")
 def create_flashinfer_backend(runner):
     import torch

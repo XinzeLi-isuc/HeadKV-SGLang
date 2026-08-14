@@ -929,6 +929,38 @@ class ServerArgs:
     disable_radix_cache: A[
         bool, "Disable RadixAttention for prefix caching.", NS("memory")
     ] = False
+    # ---- HeadKV (head-wise heterogeneous KV cache) ----
+    enable_headkv: A[
+        bool,
+        "Enable HeadKV: head-wise Full/Compact dual KV pool with pluggable "
+        "head-selection policy (DuoAttention / RLKV). Forces triton-ish "
+        "headkv attention backend and disables radix cache.",
+        NS("memory"),
+    ] = False
+    headkv_policy: A[
+        str, "HeadKV head-selection policy: duo | rlkv | manual.", NS("memory")
+    ] = "duo"
+    headkv_pattern_path: A[
+        str,
+        "HeadKV pattern/adapter directory (full_attention_heads.tsv or "
+        "adapter_weights.tsv + optional config.json).",
+        NS("memory"),
+    ] = ""
+    headkv_full_head_ratio: A[
+        float, "HeadKV deterministic top-k ratio (0,1] for duo policy.", NS("memory")
+    ] = None
+    headkv_threshold: A[
+        float, "HeadKV score threshold binarization (duo policy).", NS("memory")
+    ] = None
+    headkv_sink_size: A[
+        int, "HeadKV sink window size (override pattern config).", NS("memory")
+    ] = None
+    headkv_recent_size: A[
+        int, "HeadKV recent window size (override pattern config).", NS("memory")
+    ] = None
+    headkv_rlkv_sparsity: A[
+        float, "HeadKV RLKV sparsity (0-1, default 0.5).", NS("memory")
+    ] = 0.5
     enable_page_major_kv_layout: A[
         bool,
         "Enable the page-major KV layout: lay out the Mamba state and full/SWA "
@@ -3629,6 +3661,7 @@ class ServerArgs:
         # deterministic backend is set before auto-detection fills it in.
         self._handle_deterministic_inference()
         self._handle_attention_backend_compatibility()
+        self._handle_headkv()
         # Must run after the attention backend is resolved so the trtllm_mla
         # default (auto-selected for DeepseekV3ForCausalLM on sm100) is visible.
         self._disable_prefill_cuda_graph_for_deepseek_trtllm_mla()
@@ -5867,6 +5900,19 @@ class ServerArgs:
                 return "torch_native"
             else:
                 return "triton"
+
+    def _handle_headkv(self):
+        """HeadKV:force the headkv attention backend + disable radix cache.
+
+        Must run after backend resolution (post-process pass) so the
+        resolved attention_backend is overwritten deterministically.
+        """
+        if not self.enable_headkv:
+            return
+        self.attention_backend = "headkv"
+        self.prefill_attention_backend = None
+        self.decode_attention_backend = None
+        self.disable_radix_cache = True
 
     def _handle_attention_backend_compatibility(self):
         model_config = self.get_model_config()

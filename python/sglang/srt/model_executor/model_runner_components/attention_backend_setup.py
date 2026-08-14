@@ -164,6 +164,10 @@ def resolve_attention_backend_strs(
     server_args = model_runner.server_args
     is_draft_worker = model_runner.is_draft_worker
     draft_attn_backend = model_runner.draft_attention_backend
+    if server_args.enable_headkv and not is_draft_worker:
+        # HeadKV:deterministic backend override (resolution pipeline may
+        # have re-filled the default after __post_init__).
+        return ResolvedAttentionBackendStr(prefill="headkv", decode="headkv")
     if is_draft_worker and draft_attn_backend:
         logger.warning(f"Overriding draft attention backend to {draft_attn_backend}.")
         # Single backend for all draft modes (no prefill/decode split).
