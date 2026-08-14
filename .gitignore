@@ -1,3 +1,5 @@
 __pycache__/
 *.pyc
 sglang_storage/
+# 面试素材仅本地(不随仓库分发)
+docs/interview/
