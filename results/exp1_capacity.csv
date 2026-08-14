@@ -1,0 +1,5 @@
+effective_full_kv_head_ratio,full_pool_bytes,compact_pool_bytes,full_pool_GB,compact_pool_GB,max_total_tokens,max_running_requests,full_heads,compact_heads
+0.25,25638764544,1208057856,25.639,1.208,782432,32,64,192
+0.5,26041450496,805371904,26.041,0.805,397360,32,128,128
+0.75,26444070912,402685952,26.444,0.403,269002,32,192,64
+1.0,26846822400,0,26.847,0.0,204824,32,256,0

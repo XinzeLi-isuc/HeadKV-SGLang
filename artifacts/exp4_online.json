@@ -1,0 +1,46 @@
+{
+  "memory_light": {
+    "fullkv": {
+      "n": 441,
+      "req_per_s": 7.35,
+      "output_tok_per_s": 235.1,
+      "p50_ttft_s": 0.322,
+      "p95_ttft_s": 0.362,
+      "p50_tpot_s": 0.0234,
+      "p95_tpot_s": 0.031,
+      "max_running_requests": 8
+    },
+    "headkv": {
+      "n": 438,
+      "req_per_s": 7.3,
+      "output_tok_per_s": 233.5,
+      "p50_ttft_s": 0.258,
+      "p95_ttft_s": 0.331,
+      "p50_tpot_s": 0.0267,
+      "p95_tpot_s": 0.0312,
+      "max_running_requests": 8
+    }
+  },
+  "memory_bound": {
+    "fullkv": {
+      "n": 32,
+      "req_per_s": 0.53,
+      "output_tok_per_s": 68.3,
+      "p50_ttft_s": 7.008,
+      "p95_ttft_s": 11.028,
+      "p50_tpot_s": 0.0774,
+      "p95_tpot_s": 0.1109,
+      "max_running_requests": 8
+    },
+    "headkv": {
+      "n": 40,
+      "req_per_s": 0.67,
+      "output_tok_per_s": 85.3,
+      "p50_ttft_s": 7.028,
+      "p95_ttft_s": 11.031,
+      "p50_tpot_s": 0.0713,
+      "p95_tpot_s": 0.106,
+      "max_running_requests": 8
+    }
+  }
+}

@@ -1,0 +1,13 @@
+task,system,metric,value
+narrativeqa,full_hf,F1,31.49
+narrativeqa,fullkv_sglang,F1,31.49
+narrativeqa,duo_hf,F1,28.26
+narrativeqa,headkv_sglang,F1,32.48
+2wikimqa,full_hf,F1,21.35
+2wikimqa,fullkv_sglang,F1,20.38
+2wikimqa,duo_hf,F1,20.98
+2wikimqa,headkv_sglang,F1,18.89
+niah_4k,full_hf,hit/9,9
+niah_4k,duo_hf,hit/9,9
+niah_4k,fullkv_sglang,hit/9,9
+niah_4k,headkv_sglang,hit/9,9

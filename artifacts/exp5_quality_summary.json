@@ -1,0 +1,22 @@
+{
+  "niah_4k_hits": {
+    "full_hf": 9,
+    "duo_hf": 9,
+    "fullkv_sglang": 9,
+    "headkv_sglang": 9
+  },
+  "longbench_f1_30": {
+    "narrativeqa": {
+      "full_hf": 31.49,
+      "fullkv_sglang": 31.49,
+      "duo_hf": 28.26,
+      "headkv_sglang": 32.48
+    },
+    "2wikimqa": {
+      "full_hf": 21.35,
+      "fullkv_sglang": 20.38,
+      "duo_hf": 20.98,
+      "headkv_sglang": 18.89
+    }
+  }
+}

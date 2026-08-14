@@ -1,0 +1,70 @@
+{
+  "method": "duo_attn",
+  "n": 9,
+  "hits": 9,
+  "rows": [
+    {
+      "depth": 0.2,
+      "seed": 0,
+      "magic": 865560,
+      "hit": true,
+      "out": " 865560.  The history of the ancient kin"
+    },
+    {
+      "depth": 0.2,
+      "seed": 1,
+      "magic": 525869,
+      "hit": true,
+      "out": " 525869. 525869. 525869. 525869."
+    },
+    {
+      "depth": 0.2,
+      "seed": 2,
+      "magic": 853817,
+      "hit": true,
+      "out": " 853817. 853817. 853817. 853817."
+    },
+    {
+      "depth": 0.5,
+      "seed": 0,
+      "magic": 865560,
+      "hit": true,
+      "out": " 865560.  The history of the ancient kin"
+    },
+    {
+      "depth": 0.5,
+      "seed": 1,
+      "magic": 525869,
+      "hit": true,
+      "out": " 525869. 525869. 525869. 525869."
+    },
+    {
+      "depth": 0.5,
+      "seed": 2,
+      "magic": 853817,
+      "hit": true,
+      "out": " 853817. 853817. 853817. 853817."
+    },
+    {
+      "depth": 0.8,
+      "seed": 0,
+      "magic": 865560,
+      "hit": true,
+      "out": " 865560.  The history of the ancient kin"
+    },
+    {
+      "depth": 0.8,
+      "seed": 1,
+      "magic": 525869,
+      "hit": true,
+      "out": " 525869. 525869. 525869. 525869."
+    },
+    {
+      "depth": 0.8,
+      "seed": 2,
+      "magic": 853817,
+      "hit": true,
+      "out": " 853817.  The history of the ancient kin"
+    }
+  ]
+}
