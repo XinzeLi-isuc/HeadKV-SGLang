@@ -1736,8 +1736,9 @@ class ModelRunner:
         )
         sink = self.server_args.headkv_sink_size
         recent = self.server_args.headkv_recent_size
-        if is_rlkv_entry:
-            # 兼容老入口:window 未显式给时用 RLKV 官方默认 16/32
+        if is_rlkv_entry or policy == "rlkv":
+            # 兼容 RLKV 语义:window 未显式给时用 RLKV 官方默认 16/32
+            # (新入口 --headkv-policy rlkv 与老入口 --enable-rlkv-inference 一致)
             if sink is None:
                 sink = self.server_args.sink_window_size
             if recent is None:
