@@ -31,7 +31,9 @@ decode 吞吐:   CUDA Graph 下 94~165 token/s(eager 约 20 量级)
 - [x] Phase S0:双 policy 统一入口(Gate S0,2026-08-14;70 单测)
 - [x] Phase S1/S2:双 policy 对照 + head 分布分析(Gate S1/S2)
 - [x] Phase S3:CUDA Graph 开启(Gate S3;0.33s 消除 90%+)
-- [ ] Phase S4:current-main 迁移(投递后深化,止损框架在升级计划书 §8)
+- [x] Phase S4:current SGLang main 端到端迁移(Gate S4,2026-08-14;
+      sglang 0.5.18.dev@e1c4db962 上 E2E 打通, T0=204698→Tf=397108;
+      独立 env headkv-main;headkv 算法包零改动)
 - [x] Phase S5:文档交付
 
 ## 代码结构

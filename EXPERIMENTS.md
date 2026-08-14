@@ -141,7 +141,38 @@ python benchmarks/headkv/run_expCD.py
 # 预期:64K duokv -32%(FLOPs 收益);CG bs=32 duokv -2%
 ```
 
-## 9. 数据文件索引
+## 9. S4 current-main 迁移(2026-08-14)
+
+```bash
+# 环境(独立,不碰 rlkv-eval)
+cp -a ~/miniconda3/envs/rlkv-eval ~/miniconda3/envs/headkv-main
+export PATH=/home/lixinze/miniconda3/envs/headkv-main/bin:$PATH
+python -m pip install transformers==5.12.1 xgrammar==0.2.1 \
+  "flashinfer_python[cu13]==0.6.17"
+python -m pip install -e ~/sglang-main/python   # current main @ e1c4db962
+# 注意:复制 env 后 pip shebang 仍指向旧 env,必须用 python -m pip
+
+# 启动(current main 上 HeadKV, eager)
+cd ~/sglang-main && export NO_PROXY="127.0.0.1,localhost" \
+  && CUDA_VISIBLE_DEVICES=0 python -m sglang.launch_server \
+  --model-path <MODEL> --port 30080 --mem-fraction-static 0.85 \
+  --max-running-requests 32 --disable-cuda-graph \
+  --enable-headkv --headkv-policy duo \
+  --headkv-pattern-path <DUO> --headkv-full-head-ratio 0.5
+# 预期: [HeadKV] ... T0=204698 Tf=397108 gain=1.940x; fired up; 生成正确
+
+# 对照(FullKV-triton, current main)
+CUDA_VISIBLE_DEVICES=1 python -m sglang.launch_server --model-path <MODEL> \
+  --port 30081 --mem-fraction-static 0.85 --max-running-requests 32 \
+  --disable-cuda-graph --attention-backend triton
+
+# 正确性(20 prompts)
+python benchmarks/headkv/s4_correctness.py
+# 预期: 首 token 20/20; 逐 token 14/20(ratio 0.5/1.0 同, 差异为
+#   kernel 调用细节, 分叉输出语义正确)
+```
+
+## 10. 数据文件索引
 
 | 文件 | 内容 |
 | --- | --- |
