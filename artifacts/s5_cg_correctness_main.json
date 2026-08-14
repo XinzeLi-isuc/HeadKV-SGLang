@@ -1,0 +1,142 @@
+[
+  {
+    "idx": 0,
+    "exact": false,
+    "first_tok": true,
+    "fullkv": " Paris.\nWhat is the capital of France? Answer in one word. P",
+    "headkv": " Paris.\nWhat is the capital of France? Answer in one word. P"
+  },
+  {
+    "idx": 1,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " TCP (Transmission Control Protocol) is a connection-oriente",
+    "headkv": " TCP (Transmission Control Protocol) is a connection-oriente"
+  },
+  {
+    "idx": 2,
+    "exact": false,
+    "first_tok": true,
+    "fullkv": " The function should take an integer n as input and return t",
+    "headkv": " The!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+  },
+  {
+    "idx": 3,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " The quick brown fox jumps over the lazy dog. The quick brow",
+    "headkv": " The quick brown fox jumps over the lazy dog. The quick brow"
+  },
+  {
+    "idx": 4,
+    "exact": false,
+    "first_tok": true,
+    "fullkv": " What are the advantages of using vector databases for retri",
+    "headkv": " What are the advantages of using vector databases for retri"
+  },
+  {
+    "idx": 5,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " Cobb, a skilled thief, specializes in entering people's dre",
+    "headkv": " Cobb, a skilled thief, specializes in entering people's dre"
+  },
+  {
+    "idx": 6,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " Attention is an important component of transformer models, ",
+    "headkv": " Attention is an important component of transformer models, "
+  },
+  {
+    "idx": 7,
+    "exact": false,
+    "first_tok": true,
+    "fullkv": " \n\nPaged attention in vLLM is a technique that allows the mo",
+    "headkv": " \n\nPaged attention in vLLM is a technique used to improve th"
+  },
+  {
+    "idx": 8,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " First, subtract 9 from 17. That gives you 8. But that is no",
+    "headkv": " First, subtract 9 from 17. That gives you 8. But that is no"
+  },
+  {
+    "idx": 9,
+    "exact": false,
+    "first_tok": true,
+    "fullkv": " Speculative decoding is a technique used in large language ",
+    "headkv": " Speculative decoding is a technique used in large language "
+  },
+  {
+    "idx": 10,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " 1234 * 5678 = 7,026,852\n## Step 1: Multiply the numbers in ",
+    "headkv": " 1234 * 5678 = 7,026,852\n## Step 1: Multiply the numbers in "
+  },
+  {
+    "idx": 11,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " The formula is: sum = (n/2)(first number + last number) whe",
+    "headkv": " The formula is: sum = (n/2)(first number + last number) whe"
+  },
+  {
+    "idx": 12,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " The table has the following structure:\n\n| word |\n|------|\n|",
+    "headkv": " The table has the following structure:\n\n| word |\n|------|\n|"
+  },
+  {
+    "idx": 13,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " This one-liner should be able to handle files larger than 1",
+    "headkv": " This one-liner should be able to handle files larger than 1"
+  },
+  {
+    "idx": 14,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " 482913. No, that's not it. The special magic number is 4829",
+    "headkv": " 482913. No, that's not it. The special magic number is 4829"
+  },
+  {
+    "idx": 15,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " \nA blue unicorn named Zephyr lives in a glass forest. Later",
+    "headkv": " \nA blue unicorn named Zephyr lives in a glass forest. Later"
+  },
+  {
+    "idx": 16,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " \nStep 1: The problem states that the secret key is 'K7P-9QX",
+    "headkv": " \nStep 1: The problem states that the secret key is 'K7P-9QX"
+  },
+  {
+    "idx": 17,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " \n\nThe sky above the port was the color of television, tuned",
+    "headkv": " \n\nThe sky above the port was the color of television, tuned"
+  },
+  {
+    "idx": 18,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " \n\n```json\n{\n  \"name\": \"John Doe\",\n  \"age\": 30,\n  \"city\": \"N",
+    "headkv": " \n\n```json\n{\n  \"name\": \"John Doe\",\n  \"age\": 30,\n  \"city\": \"N"
+  },
+  {
+    "idx": 19,
+    "exact": true,
+    "first_tok": true,
+    "fullkv": " I'm not sure what I'm doing here. I'm just a simple AI, I d",
+    "headkv": " I'm not sure what I'm doing here. I'm just a simple AI, I d"
+  }
+]

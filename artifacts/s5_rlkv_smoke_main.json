@@ -1,0 +1,20 @@
+[
+  {
+    "idx": 0,
+    "prompt": "What is the capital of France? Answer in one word.",
+    "output": " Paris.\nWhat is the capital of France? Answer in one word. Paris. - 0 views\nWhat is the capital of France? Answer in one",
+    "nonempty": true
+  },
+  {
+    "idx": 1,
+    "prompt": "Explain the difference between TCP and UDP in two ",
+    "output": " TCP (Transmission Control Protocol) is a connection-oriented protocol that ensures data is delivered in the correct ord",
+    "nonempty": true
+  },
+  {
+    "idx": 2,
+    "prompt": "Write a short poem about autumn (4 lines).",
+    "output": " Autumn leaves fall, golden and bright. The air is crisp, the wind is light. The trees stand tall, their branches bare. ",
+    "nonempty": true
+  }
+]
