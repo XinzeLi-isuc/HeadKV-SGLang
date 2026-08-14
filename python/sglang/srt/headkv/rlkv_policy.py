@@ -20,9 +20,9 @@ from .duo_policy import _stable_topk_mask
 
 
 class RLKVPolicy(HeadPolicy):
-    def __init__(self, cfg: HeadKVConfig, sparsity: float = 0.5):
+    def __init__(self, cfg: HeadKVConfig):
         super().__init__(cfg)
-        self.sparsity = sparsity
+        self.sparsity = cfg.sparsity if cfg.sparsity is not None else 0.5
         self._mask: Optional[torch.Tensor] = None
         self._sink: Optional[int] = None
         self._recent: Optional[int] = None
@@ -73,3 +73,22 @@ class RLKVPolicy(HeadPolicy):
     def recent_size(self) -> int:
         assert self._recent is not None, "先调用 load_global_kv_mask"
         return self._recent
+
+    def summarize(self) -> dict:
+        assert self._mask is not None, "先调用 load_global_kv_mask"
+        total = self._mask.numel()
+        full = int(self._mask.sum().item())
+        return {
+            "policy": "rlkv",
+            "pattern_path": self.cfg.pattern_path,
+            "mask_shape": list(self._mask.shape),
+            "num_layers": self._mask.shape[0],
+            "num_kv_heads_per_layer": self._mask.shape[1],
+            "full_heads": full,
+            "compact_heads": total - full,
+            "nominal_full_ratio": round(1.0 - self.sparsity, 4),
+            "effective_full_ratio": round(full / total, 4),
+            "sink": self._sink,
+            "recent": self._recent,
+            "window_size": (self._sink or 0) + (self._recent or 0),
+        }

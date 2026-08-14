@@ -27,6 +27,8 @@ class HeadKVConfig:
     # window 显式覆盖(优先级最高)
     sink_size: Optional[int] = None
     recent_size: Optional[int] = None
+    # rlkv policy 的 sparsity(0~1,默认 0.5;None → 0.5)
+    sparsity: Optional[float] = None
     # HeadKV 模式必填(拒绝 fork 默认 48 静默生效)
     max_running_requests: Optional[int] = None
     # 附加信息(来自 pattern config.json,由 policy 填充)
@@ -64,6 +66,10 @@ class HeadKVConfig:
             # rlkv policy 需要 adapter 目录(可走 server_args.adapter_load_path 兼容入口)
             if not self.pattern_path:
                 raise HeadKVConfigError("rlkv policy 必须指定 adapter 目录")
+            if self.sparsity is not None and not (0 <= self.sparsity <= 1):
+                raise HeadKVConfigError(
+                    f"sparsity 必须在 [0,1], got {self.sparsity}"
+                )
         if self.sink_size is not None and self.sink_size < 0:
             raise HeadKVConfigError(f"sink_size 不能为负, got {self.sink_size}")
         if self.recent_size is not None and self.recent_size < 0:
