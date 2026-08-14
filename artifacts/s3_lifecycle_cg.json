@@ -1,0 +1,9 @@
+{
+  "total": 300,
+  "ok": 300,
+  "failures": [],
+  "n_failures": 0,
+  "elapsed_s": 84.2,
+  "req_per_s": 3.56,
+  "workers": 8
+}
