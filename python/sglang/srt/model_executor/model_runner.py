@@ -870,12 +870,12 @@ class ModelRunner:
 
         sa = self.server_args
         is_rlkv = sa.headkv_policy == "rlkv"
-        if is_rlkv and sa.headkv_sink_size is None:
-            # RLKV 无 pattern config.json:window 用官方默认 16/32。
-            # (v0.5.2 的 sa.sink_window_size 在 current main ServerArgs 已不存在)
-            sa.headkv_sink_size = 16
-        if is_rlkv and sa.headkv_recent_size is None:
-            sa.headkv_recent_size = 32
+        # RLKV window 默认 16/32 在 server_args._handle_headkv 解析期写入
+        # (ServerArgs 物化后只读, 不能在此回写); 此处局部 fallback 防御。
+        sink_size = sa.headkv_sink_size if sa.headkv_sink_size is not None else 16
+        recent_size = (
+            sa.headkv_recent_size if sa.headkv_recent_size is not None else 32
+        )
 
         cfg = HeadKVConfig(
             enable=True,
@@ -883,8 +883,8 @@ class ModelRunner:
             pattern_path=sa.headkv_pattern_path,
             full_head_ratio=sa.headkv_full_head_ratio,
             threshold=sa.headkv_threshold,
-            sink_size=sa.headkv_sink_size,
-            recent_size=sa.headkv_recent_size,
+            sink_size=sink_size,
+            recent_size=recent_size,
             sparsity=sa.headkv_rlkv_sparsity,
             max_running_requests=sa.max_running_requests,
         )

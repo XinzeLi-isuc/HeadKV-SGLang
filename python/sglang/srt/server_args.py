@@ -5913,6 +5913,13 @@ class ServerArgs:
         self.prefill_attention_backend = None
         self.decode_attention_backend = None
         self.disable_radix_cache = True
+        if self.headkv_policy == "rlkv":
+            # RLKV 无 pattern config.json:window 用官方默认 16/32。
+            # 必须在 resolution 期写入(ServerArgs 物化后只读)。
+            if self.headkv_sink_size is None:
+                self.headkv_sink_size = 16
+            if self.headkv_recent_size is None:
+                self.headkv_recent_size = 32
 
     def _handle_attention_backend_compatibility(self):
         model_config = self.get_model_config()
