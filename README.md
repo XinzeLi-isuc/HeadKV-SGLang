@@ -6,16 +6,18 @@ head-reallocation runtime:Retrieval (Full) Heads 保存完整历史,Streaming
 从而提升 max_total_tokens 与连续批处理并发容量。
 
 > 求职(AI Infra 推理框架/推理加速)项目,2026-08。**S 级完成**(双 policy 同一
-> runtime + CUDA Graph 深化)。
+> runtime + CUDA Graph 深化)+ **E1-E5 实验标注体系**(容量/上下文/并发/
+> 在线/质量,与官方 DuoAttention 同协议对照)。
 > 设计:`DESIGN.md`;升级计划:`HeadKV-SGLang_S级升级计划书.md`;
-> 实验复现:`EXPERIMENTS.md`。
+> 实验复现:`EXPERIMENTS.md`(§11 迁移线、§12 E1-E5 标注体系)。
 
 ## 结果速览(实测,A6000, Meta-Llama-3.1-8B-Instruct)
 
 ```text
 KV token 容量:  T0=204824 → Tf=782432(ratio 0.25, 3.82x)
                1.94x(ratio 0.5),与预算公式逐位吻合
-质量:          NIAH 4K 9/9 无损;LongBench 2 子任务 F1 持平(略高)
+质量:          NIAH 4K 9/9 无损(Full/Official Duo/HeadKV 三系统一致)
+               LongBench narrativeqa F1 32.48 vs Full 31.49(官方协议 30 条)
 生命周期:      1500 混合请求零失败,allocator 无泄漏
 单请求开销:    eager 固定 0.33s(启动成本,不随长度) → CUDA Graph 消除 90%+
                (4K 绝对差 +0.334s → +0.030s)
@@ -23,6 +25,12 @@ KV token 容量:  T0=204824 → Tf=782432(ratio 0.25, 3.82x)
 decode 吞吐:   CUDA Graph 下 94~165 token/s(eager 约 20 量级)
 双 policy:     同一 runtime 支持 DuoAttentionPolicy 与 RLKVPolicy(输出一致,
                同 effective ratio 质量对照,head 分布 Jaccard=0.446)
+E1-E5 标注体系(2026-08-14, splits=32 修复后全量重跑):
+  容量     : full/comp pool bytes 4 点标注(exp1_capacity.csv)
+  上下文   : 32K prefill HeadKV 快 27%(6.68s→4.85s, exp2_context.csv)
+  并发     : 16K×24 容量红利窗口 HeadKV 快 9%(exp3_concurrency.json)
+  在线     : memory-bound 吞吐 +26%(0.53→0.67 req/s, exp4_online.json)
+  质量     : 官方 DuoAttention 同协议三系统对照(exp5_quality.csv)
 ```
 
 ## 项目进度
@@ -38,6 +46,9 @@ decode 吞吐:   CUDA Graph 下 94~165 token/s(eager 约 20 量级)
       CG 实测 + RLKV 启动 + 质量;修复 CG capture comp 池耗尽与
       ServerArgs 只读 2 个真实 bug,详见 EXPERIMENTS.md §11)
 - [x] Phase S6:文档交付
+- [x] E1-E5 实验标注体系(2026-08-14;容量/上下文/并发/在线/质量,
+      与官方 DuoAttention 同协议对照;发现并修复 triton
+      num_kv_splits=8 长上下文退化,详见 EXPERIMENTS.md §12)
 
 ## 代码结构
 
