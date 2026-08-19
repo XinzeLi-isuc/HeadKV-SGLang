@@ -6,15 +6,15 @@
 3. 验证确定性(两次运行 mask 一致)
 """
 import json
+from pathlib import Path
 
 import torch
 
 from sglang.srt.headkv.config import HeadKVConfig
 from sglang.srt.headkv.duo_policy import DuoAttentionPolicy
 
-PATTERN = (
-    "/home/lixinze/duo-attention-ref/attn_patterns/Meta-Llama-3.1-8B-Instruct/"
-    "lr=0.02-reg=0.05-ctx=1000_128000-multi_passkey10"
+PATTERN = str(
+    Path(__file__).resolve().parent / "data" / "meta-llama-3.1-8b-instruct"
 )
 
 

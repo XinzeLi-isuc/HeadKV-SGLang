@@ -1,10 +1,7 @@
 """HeadReallocKVPool / HeadReallocAllocator 物理测试(Phase 5,CPU 可跑)。"""
-import sys
-
 import pytest
 import torch
 
-sys.path.insert(0, "/home/lixinze/rlkv/sglang/test/srt/headkv")
 from test_headkv_attention import (  # noqa: E402
     HEAD_DIM,
     KV_HEADS,

@@ -3,13 +3,10 @@
 CPU 可跑:验证 full_to_comp_mapping 的 sink/recent/环形语义与
 ref_attention 窗口数学一致。forward 级语义由 E2E(server)验证。
 """
-import sys
-
 import numpy as np
 import pytest
 import torch
 
-sys.path.insert(0, "/home/lixinze/HeadKV-SGLang/benchmarks/headkv")
 from ref_attention import ref_single_layer_attention  # noqa: E402
 
 from sglang.srt.headkv.partition import to_tp_local  # noqa: E402

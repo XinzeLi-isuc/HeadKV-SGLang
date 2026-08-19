@@ -1,6 +1,7 @@
 """DuoAttentionPolicy 单元测试(纯 CPU,不依赖 GPU/SGLang)。"""
 import os
 import tempfile
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -9,10 +10,11 @@ import torch
 from sglang.srt.headkv.config import HeadKVConfig, HeadKVConfigError
 from sglang.srt.headkv.duo_policy import DuoAttentionPolicy, _stable_topk_mask
 
-OFFICIAL_PATTERN = (
-    "/home/lixinze/duo-attention-ref/attn_patterns/Meta-Llama-3.1-8B-Instruct/"
-    "lr=0.02-reg=0.05-ctx=1000_128000-multi_passkey10"
-)
+# Vendored copy of the official DuoAttention pattern for Meta-Llama-3.1-8B-Instruct
+# (train config: lr=0.02, reg=0.05, ctx=1000..128000, multi-passkey10).
+# Source: mit-han-lab/duo-attention release assets. See NOTICE for attribution.
+DATA_DIR = Path(__file__).resolve().parent / "data" / "meta-llama-3.1-8b-instruct"
+OFFICIAL_PATTERN = str(DATA_DIR)
 
 
 class FakeModelConfig:
